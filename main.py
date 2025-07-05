@@ -1,37 +1,35 @@
-import asyncio
 from pyrogram import Client, filters
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-
-import config
-
-app = Client(
-    "BennBickmanBot",
-    api_id=config.API_ID,
-    api_hash=config.API_HASH,
-    bot_token=config.BOT_TOKEN
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
+from database import (
+    get_user, add_xp, get_balance, update_balance, get_sudo, is_sudo, store_doubloons,
+    withdraw_doubloons, get_chest, update_level, get_all_users
 )
+from utils import send_image_reply, daily_cooldown, bet_limit, xp_required_for_level
+from datetime import datetime, timedelta
+import random, asyncio, os
 
+API_ID = int(os.getenv("API_ID"))
+API_HASH = os.getenv("API_HASH")
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+LOG_CHANNEL = int(os.getenv("LOG_CHANNEL"))
+
+app = Client("bennbickman", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
+
+# Example command
 @app.on_message(filters.command("start"))
-async def start(client, message):
-    buttons = InlineKeyboardMarkup([
-        [InlineKeyboardButton("Guide (In progress)", callback_data="guide")],
-        [
-            InlineKeyboardButton("Updates", url="https://t.me/bennbickman_offical"),
-            InlineKeyboardButton("Support", url="https://t.me/bennbickman_support")
-        ],
-        [InlineKeyboardButton("Add Me", url=f"https://t.me/{client.me.username}?startgroup=true")]
+async def start_cmd(_, message: Message):
+    keyboard = InlineKeyboardMarkup([
+        [InlineKeyboardButton("Updates", url="https://t.me/bennbickman_offical"),
+         InlineKeyboardButton("Support", url="https://t.me/bennbickman_support")],
+        [InlineKeyboardButton("Add Me", url=f"https://t.me/{(await app.get_me()).username}?startgroup=true")]
     ])
-    
-    text = (
-        f"☠️ Ahoy, {message.from_user.mention}!\n\n"
-        "**I'm Benn Beckman**, your pirate crew's strategic commander! 🧠🏴‍☠️\n\n"
-        "Use /help to see all my commands and start earning 🪙 doubloons!"
+    await message.reply_text(
+        f"☠️ Ahoy, {message.from_user.first_name}! I'm **Benn Bickman** 🧠 – strategist of Red Hair Pirates!\n\n"
+        "💰 Collect doubloons, climb the leaderboard, and rise through the ranks!\n\n"
+        "Use /help to see my commands.\n\n⚓",
+        reply_markup=keyboard
     )
 
-    await message.reply_text(text, reply_markup=buttons)
-
-@app.on_callback_query(filters.regex("guide"))
-async def guide_callback(client, callback_query):
-    await callback_query.answer("Guide is still in progress!", show_alert=True)
+# Implement all commands next...
 
 app.run()
