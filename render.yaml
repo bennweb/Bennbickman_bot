@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: bennbickman-bot
+    env: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python3 main.py"
+    autoDeploy: true
+    envVars:
+      - key: BOT_TOKEN
+        sync: false
+      - key: MONGO_URL
+        sync: false
+      - key: LOG_CHANNEL
+        sync: false
+      - key: API_ID
+        sync: false
+      - key: API_HASH
+        sync: false
