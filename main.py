@@ -1,6 +1,6 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
-from database import (
+from database.users import (
     get_user, add_xp, get_balance, update_balance, get_sudo, is_sudo, store_doubloons,
     withdraw_doubloons, get_chest, update_level, get_all_users
 )
@@ -29,7 +29,5 @@ async def start_cmd(_, message: Message):
         "Use /help to see my commands.\n\n⚓",
         reply_markup=keyboard
     )
-
-# Implement all commands next...
 
 app.run()
